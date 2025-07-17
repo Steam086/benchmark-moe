@@ -5,9 +5,10 @@ from vllm.distributed.parallel_state import init_distributed_environment, ensure
 
 import os
 
+# TODO Here we use a seperate _EP and _TP group, but actually all_to_all function calls vllm's group,
+# so how to solve it gracefully?
 
-
-_EP: GroupCoordinator
+_EP: GroupCoordinator 
 
 _TP: GroupCoordinator
 

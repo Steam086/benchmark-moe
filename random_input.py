@@ -1,4 +1,21 @@
 import torch
+import random
+import numpy as np
+import os
+
+# TODO use the same seed 
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.npu.is_available():
+        torch.npu.manual_seed(seed)
+        torch.npu.manual_seed_all(seed)
+
+    # optional may affect performance
+    torch.use_deterministic_algorithms(True)
+# set random seed for reproducibility
+set_seed(42)
 
 
 def prepare_weights(num_experts:int,

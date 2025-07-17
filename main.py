@@ -1,9 +1,12 @@
 import torch
-from vllm.model_executor.layers.fused_moe import FusedMoE
-from vllm.config import ParallelConfig
-from .random_input import prepare_weights, prepare_inputs, init_fused_moe
+import torch_npu
+import os
+import argparse
+
+from .random_input import prepare_weights, prepare_inputs
 from .ascend_fused_experts import fused_moe
 from .parallel_group import init_env, get_ep_group
+
 
 def benchmark_config(
     num_tokens: int,
@@ -75,9 +78,15 @@ def benchmark_config(
 
 
 def main():
+    use_mix_moe = int(os.environ.get("USE_MIX_MOE", "0"))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ep", type=int, default=2 if use_mix_moe else 1, help="expert parallel size")
+    parser.add_argument("--tp", type=int, default=4 if use_mix_moe else 8, help="tensor parallel size")
+    args = parser.parse_args()
+    
     parallel_config = {
-        "ep_size": 2,
-        "tp_size": 4
+        "ep_size": args.ep,
+        "tp_size": args.tp
     }
 
 
